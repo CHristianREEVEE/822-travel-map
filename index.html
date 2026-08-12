@@ -39,20 +39,21 @@ html, body {
 
 /* ===== Layout ===== */
 .app {
-  display: flex;
+  display: block;
   height: 100vh;
   width: 100vw;
 }
 
 /* ===== Sidebar ===== */
 .sidebar {
-  width: 400px;
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
   background: var(--bg);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  border-right: 1px solid var(--glass-border);
+  height: 100vh;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) transparent;
 }
@@ -275,17 +276,105 @@ html, body {
   line-height: 1.4;
 }
 
-/* ===== Map ===== */
+/* ===== Map (mini floating card → expands on click) ===== */
 .map-wrap {
-  flex: 1;
-  position: relative;
-  min-width: 0;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 280px;
+  height: 200px;
+  border-radius: var(--radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  overflow: hidden;
+  z-index: 1000;
+  cursor: pointer;
+  transition: width 0.45s cubic-bezier(0.4,0,0.2,1),
+               height 0.45s cubic-bezier(0.4,0,0.2,1),
+               bottom 0.45s cubic-bezier(0.4,0,0.2,1),
+               right 0.45s cubic-bezier(0.4,0,0.2,1),
+               border-radius 0.45s;
+}
+.map-wrap.expanded {
+  width: calc(100vw - 32px);
+  height: calc(100vh - 32px);
+  bottom: 16px;
+  right: 16px;
+  border-radius: 20px;
+  cursor: default;
 }
 #map {
   width: 100%;
   height: 100%;
   background: var(--bg-2);
 }
+
+/* Expand hint overlay (mini mode) */
+.map-hint {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  z-index: 1001;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.map-hint .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.3); }
+}
+.map-wrap.expanded .map-hint { opacity: 0; }
+
+/* Close button (expanded mode) */
+.map-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--text);
+  cursor: pointer;
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s 0.2s;
+}
+.map-close:hover {
+  background: rgba(239, 68, 68, 0.6);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+.map-wrap.expanded .map-close {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Bottom padding so sidebar content isn't hidden behind mini map */
+.sidebar { padding-bottom: 230px; }
+
 .leaflet-popup-content-wrapper {
   background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(16px);
@@ -391,18 +480,10 @@ html, body {
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .app {
-    flex-direction: column;
-    height: 100vh;
-  }
   .sidebar {
     width: 100%;
-    height: 45vh;
-    border-right: none;
-    border-bottom: 1px solid var(--glass-border);
-  }
-  .map-wrap {
-    height: 55vh;
+    max-width: 100%;
+    height: 100vh;
   }
   .header {
     padding: 18px 20px 16px;
@@ -411,6 +492,21 @@ html, body {
   .header .badge { font-size: 10px; }
   .panel { margin: 10px 12px; padding: 12px 14px; }
   .legend-grid { grid-template-columns: 1fr; }
+  .map-wrap {
+    width: calc(100vw - 24px);
+    height: 180px;
+    bottom: 12px;
+    right: 12px;
+    border-radius: 14px;
+  }
+  .map-wrap.expanded {
+    width: 100vw;
+    height: 100vh;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+  }
+  .sidebar { padding-bottom: 200px; }
 }
 </style>
 </head>
@@ -473,8 +569,10 @@ html, body {
     </div>
   </div>
 
-  <!-- ===== Map ===== -->
-  <div class="map-wrap">
+  <!-- ===== Map (mini → expand on click) ===== -->
+  <div class="map-wrap" id="mapWrap">
+    <div class="map-hint"><span class="dot"></span>点击查看大地图</div>
+    <div class="map-close" id="mapClose">✕</div>
     <div id="map"></div>
   </div>
 </div>
@@ -608,10 +706,12 @@ stops.forEach((stop, idx) => {
     // Highlight active
     document.querySelectorAll('.tl-item').forEach(el => el.classList.remove('active'));
     item.classList.add('active');
-    // Fly to location
-    map.flyTo([stop.lat, stop.lng], 17, { duration: 1.2 });
-    // Open popup
-    setTimeout(() => stopMarkers[idx].openPopup(), 600);
+    // Expand map first, then fly
+    expandMap();
+    setTimeout(() => {
+      map.flyTo([stop.lat, stop.lng], 17, { duration: 1.2 });
+      setTimeout(() => stopMarkers[idx].openPopup(), 600);
+    }, 500);
   });
   tl.appendChild(item);
 });
@@ -629,10 +729,47 @@ hotels.forEach((hotel, idx) => {
     </div>
   `;
   card.addEventListener('click', () => {
-    map.flyTo([hotel.lat, hotel.lng], 17, { duration: 1.2 });
-    setTimeout(() => hotelMarkers[idx].openPopup(), 600);
+    expandMap();
+    setTimeout(() => {
+      map.flyTo([hotel.lat, hotel.lng], 17, { duration: 1.2 });
+      setTimeout(() => hotelMarkers[idx].openPopup(), 600);
+    }, 500);
   });
   hl.appendChild(card);
+});
+
+// ===== Map expand / collapse =====
+const mapWrap = document.getElementById('mapWrap');
+const mapClose = document.getElementById('mapClose');
+let isExpanded = false;
+
+function expandMap() {
+  if (isExpanded) return;
+  isExpanded = true;
+  mapWrap.classList.add('expanded');
+  // Leaflet needs invalidateSize after the transition starts
+  setTimeout(() => map.invalidateSize(), 100);
+  setTimeout(() => map.invalidateSize(), 500);
+}
+
+function collapseMap() {
+  isExpanded = false;
+  mapWrap.classList.remove('expanded');
+  setTimeout(() => map.invalidateSize(), 100);
+  setTimeout(() => map.invalidateSize(), 500);
+}
+
+// Click mini map to expand (but not when clicking close button or markers)
+mapWrap.addEventListener('click', (e) => {
+  if (isExpanded) return;
+  // Don't expand if clicking on a Leaflet marker/popup element
+  if (e.target.closest('.leaflet-marker-icon') || e.target.closest('.leaflet-popup')) return;
+  expandMap();
+});
+
+mapClose.addEventListener('click', (e) => {
+  e.stopPropagation();
+  collapseMap();
 });
 </script>
 </body>
