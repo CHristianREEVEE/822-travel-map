@@ -688,10 +688,22 @@ stops.forEach((stop, idx) => {
       <div style="color:#818cf8;font-weight:700;font-size:13px;">第 ${idx + 1} 站 / 共 ${stops.length} 站</div>
       <div style="color:#94a3b8;font-size:12px;margin-top:6px;line-height:1.4;">${stop.desc}</div>
       <div style="margin-top:8px;padding:4px 8px;background:rgba(129,140,248,0.15);border-radius:8px;color:#818cf8;font-size:12px;font-weight:600;">${stop.transport}</div>
+      <div style="display:flex;gap:6px;margin-top:10px;">
+        <button onclick="goStop(${idx - 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(30,41,59,0.8);color:#f1f5f9;font-size:12px;font-weight:600;cursor:pointer;${idx === 0 ? 'opacity:0.4;pointer-events:none;' : ''}">← 上一站</button>
+        <button onclick="goStop(${idx + 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(129,140,248,0.4);border-radius:8px;background:rgba(129,140,248,0.2);color:#818cf8;font-size:12px;font-weight:600;cursor:pointer;${idx === stops.length - 1 ? 'opacity:0.4;pointer-events:none;' : ''}">下一站 →</button>
+      </div>
     </div>
   `, { maxWidth: 280 });
   stopMarkers.push(marker);
 });
+
+// ===== Navigation: go to stop by index =====
+function goStop(i) {
+  if (i < 0 || i >= stops.length) return;
+  map.flyTo([stops[i].lat, stops[i].lng], 16, { duration: 1.0 });
+  setTimeout(() => stopMarkers[i].openPopup(), 700);
+}
+window.goStop = goStop;
 
 // ===== Hotel Markers =====
 const hotelMarkers = [];
