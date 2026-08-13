@@ -324,37 +324,72 @@ html, body {
   background: var(--bg-2);
 }
 
-/* Expand hint overlay (mini mode) */
-.map-hint {
+/* ===== Onboarding overlay (shows on page load) ===== */
+.map-onboard {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  inset: 0;
+  z-index: 1002;
   display: flex;
   align-items: center;
-  gap: 5px;
-  background: rgba(15, 23, 42, 0.82);
-  backdrop-filter: blur(8px);
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  opacity: 1;
+  transition: opacity 0.3s;
+  cursor: default;
+}
+.map-onboard.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.onboard-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.95);
   border: 1px solid var(--glass-border);
-  border-radius: 8px;
-  padding: 4px 10px;
-  font-size: 11px;
+  border-radius: 16px;
+  padding: 28px 36px 24px;
+  text-align: center;
+  max-width: 260px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.onboard-card .icon-big {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+.onboard-card .text {
+  font-size: 14px;
   font-weight: 600;
   color: var(--text);
-  z-index: 1001;
-  pointer-events: none;
-  transition: opacity 0.3s;
+  line-height: 1.5;
 }
-.map-hint .dot {
-  width: 6px; height: 6px;
+.onboard-card .text span {
+  color: var(--accent);
+}
+.onboard-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--accent);
-  animation: pulse-dot 1.8s ease-in-out infinite;
+  background: #ef4444;
+  border: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  cursor: pointer;
+  z-index: 1003;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.5);
+  transition: transform 0.15s, box-shadow 0.15s;
 }
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.3); }
+.onboard-close:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 24px rgba(239,68,68,0.7);
 }
-.map-wrap.expanded .map-hint { opacity: 0; }
 
 /* Close button (expanded mode) */
 .map-close {
@@ -589,7 +624,13 @@ html, body {
 
   <!-- ===== Map (mini → expand on click) ===== -->
   <div class="map-wrap" id="mapWrap">
-    <div class="map-hint"><span class="dot"></span>点击查看大地图</div>
+    <div class="map-onboard" id="mapOnboard">
+      <div class="onboard-card">
+        <div class="onboard-close" id="onboardClose">✕</div>
+        <div class="icon-big">🗺️</div>
+        <div class="text">点击下方<span>地图框</span><br>可进入全屏地图</div>
+      </div>
+    </div>
     <div class="map-close" id="mapClose">✕</div>
     <div id="map"></div>
   </div>
@@ -790,6 +831,8 @@ hotels.forEach((hotel, idx) => {
 // ===== Map expand / collapse =====
 const mapWrap = document.getElementById('mapWrap');
 const mapClose = document.getElementById('mapClose');
+const mapOnboard = document.getElementById('mapOnboard');
+const onboardClose = document.getElementById('onboardClose');
 let isExpanded = false;
 
 function expandMap() {
@@ -807,9 +850,20 @@ function collapseMap() {
   setTimeout(() => map.invalidateSize(), 500);
 }
 
+// Close onboarding overlay
+onboardClose.addEventListener('click', (e) => {
+  e.stopPropagation();
+  mapOnboard.classList.add('hidden');
+});
+
+// Click map area to expand (after onboarding is closed)
 mapWrap.addEventListener('click', (e) => {
   if (isExpanded) return;
   if (e.target.closest('.leaflet-marker-icon') || e.target.closest('.leaflet-popup')) return;
+  if (!mapOnboard.classList.contains('hidden')) {
+    mapOnboard.classList.add('hidden');
+    return;
+  }
   expandMap();
 });
 
