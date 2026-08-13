@@ -410,6 +410,28 @@ html, body {
   pointer-events: auto;
 }
 
+/* Tip bar (expanded mode only) */
+.map-tip-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.45);
+  color: rgba(241, 245, 249, 0.7);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 16px;
+  border-radius: 16px;
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s 0.3s;
+  white-space: nowrap;
+}
+.map-wrap.expanded .map-tip-bar {
+  opacity: 1;
+}
+
 .leaflet-popup-content-wrapper {
   background: rgba(15, 23, 42, 0.92);
   backdrop-filter: blur(16px);
@@ -624,6 +646,7 @@ html, body {
       </div>
     </div>
     <div class="map-close" id="mapClose">✕</div>
+    <div class="map-tip-bar" id="mapTipBar">👆 点击序号图标可查看具体行程</div>
     <div id="map"></div>
   </div>
 </div>
