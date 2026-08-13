@@ -641,7 +641,7 @@ html, body {
       <div class="onboard-card">
         <div class="onboard-close" id="onboardClose">✕</div>
         <div class="icon-big">🗺️</div>
-        <div class="text">点击下方<span>地图框</span><br>可进入全屏地图</div>
+        <div class="text">点击右下角<span>小地图</span><br>可全屏查看地图</div>
       </div>
     </div>
     <div class="map-close" id="mapClose">✕</div>
@@ -863,10 +863,18 @@ function collapseMap() {
   setTimeout(() => map.invalidateSize(), 500);
 }
 
-// Close onboarding overlay
+// Close onboarding overlay (via X button or clicking anywhere on overlay)
 onboardClose.addEventListener('click', (e) => {
   e.stopPropagation();
   mapOnboard.classList.add('hidden');
+});
+
+// Click on overlay background (not the card) = close overlay + expand map directly
+mapOnboard.addEventListener('click', (e) => {
+  if (e.target === mapOnboard) {
+    mapOnboard.classList.add('hidden');
+    expandMap();
+  }
 });
 
 // Click map area to expand (after onboarding is closed)
@@ -875,6 +883,7 @@ mapWrap.addEventListener('click', (e) => {
   if (e.target.closest('.leaflet-marker-icon') || e.target.closest('.leaflet-popup')) return;
   if (!mapOnboard.classList.contains('hidden')) {
     mapOnboard.classList.add('hidden');
+    expandMap();
     return;
   }
   expandMap();
