@@ -716,7 +716,7 @@ const tileLayer = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang
 
 // 瓦片加载指示器
 const mapLoading = document.createElement('div');
-mapLoading.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;background:rgba(30,41,59,0.85);color:#e2e8f0;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);border:1px solid rgba(129,140,248,0.3);pointer-events:none;transition:opacity 0.4s;';
+mapLoading.style.cssText = 'position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(30,41,59,0.92);color:#e2e8f0;padding:12px 32px;border-radius:16px;font-size:15px;font-weight:700;backdrop-filter:blur(8px);border:1px solid rgba(129,140,248,0.3);pointer-events:none;transition:opacity 0.4s;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);';
 mapLoading.textContent = '🗺️ 地图加载中…';
 document.getElementById('map').appendChild(mapLoading);
 
