@@ -305,7 +305,7 @@ html, body {
 #map {
   width: 100%;
   height: 100%;
-  background: var(--bg-2);
+  background: #e8e8e8;
 }
 
 /* ===== Onboarding overlay (fixed center on screen) ===== */
@@ -707,11 +707,28 @@ const map = L.map('map', {
 });
 
 // 高德地图中文瓦片
-L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', {
+const tileLayer = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}', {
   attribution: '高德地图',
   maxZoom: 19,
   subdomains: ['1','2','3','4'],
+  crossOrigin: true,
 }).addTo(map);
+
+// 瓦片加载指示器
+const mapLoading = document.createElement('div');
+mapLoading.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;background:rgba(30,41,59,0.85);color:#e2e8f0;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;backdrop-filter:blur(8px);border:1px solid rgba(129,140,248,0.3);pointer-events:none;transition:opacity 0.4s;';
+mapLoading.textContent = '🗺️ 地图加载中…';
+document.getElementById('map').appendChild(mapLoading);
+
+let _tilesTotal = 0, _tilesLoaded = 0;
+tileLayer.on('tileloadstart', () => _tilesTotal++);
+tileLayer.on('tileload tileerror', () => {
+  _tilesLoaded++;
+  if (_tilesLoaded >= _tilesTotal) {
+    mapLoading.style.opacity = '0';
+    setTimeout(() => mapLoading.remove(), 400);
+  }
+});
 
 // ===== Ferry Route Line (cyan dashed) =====
 L.polyline(ferryRoute, {
