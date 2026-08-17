@@ -854,6 +854,7 @@ stops.forEach((stop, idx) => {
         <button onclick="goStop(${idx - 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(30,41,59,0.8);color:#f1f5f9;font-size:12px;font-weight:600;cursor:pointer;${idx === 0 ? 'opacity:0.4;pointer-events:none;' : ''}">← 上一站</button>
         <button onclick="goStop(${idx + 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(129,140,248,0.4);border-radius:8px;background:rgba(129,140,248,0.2);color:#818cf8;font-size:12px;font-weight:600;cursor:pointer;${idx === stops.length - 1 ? 'opacity:0.4;pointer-events:none;' : ''}">下一站 →</button>
       </div>
+      <button onclick="navigateTo(${idx})" style="width:100%;margin-top:6px;padding:6px 12px;border:1px solid rgba(16,185,129,0.4);border-radius:8px;background:rgba(16,185,129,0.15);color:#10b981;font-size:12px;font-weight:600;cursor:pointer;">🧭 导航到这里</button>
     </div>
   `, { maxWidth: 300 });
   stopMarkers.push(marker);
@@ -866,6 +867,30 @@ function goStop(i) {
   setTimeout(() => stopMarkers[i].openPopup(), 700);
 }
 window.goStop = goStop;
+
+// ===== Navigate to stop (opens map app) =====
+// stops 数据在 GCJ-02 转换前是 WGS84，转换后是 GCJ-02
+// 高德/百度用 GCJ-02，腾讯用 GCJ-02，Google/Apple Maps 用 WGS84
+// 当前 stops 已被 in-place 转换为 GCJ-02，高德导航直接用
+function navigateTo(idx) {
+  const stop = stops[idx];
+  if (!stop) return;
+  const name = encodeURIComponent(stop.name);
+  const lat = stop.lat;
+  const lng = stop.lng;
+
+  // 判断移动端/PC，优先高德地图
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // 移动端：高德地图 URI API，直接调起 App
+    window.location.href = `https://uri.amap.com/marker?position=${lng},${lat}&name=${name}&coordinateSystem=gaode&callnative=1`;
+  } else {
+    // PC端：打开高德网页版
+    window.open(`https://uri.amap.com/marker?position=${lng},${lat}&name=${name}&coordinateSystem=gaode`, '_blank');
+  }
+}
+window.navigateTo = navigateTo;
 
 // ===== Hotel Markers =====
 const hotelMarkers = [];
