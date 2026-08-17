@@ -667,17 +667,17 @@ function wgs84ToGcj02(lng, lat) {
 
 // ===== Data =====
 const stops = [
-  { name: '虹桥火车站', lat: 31.1942, lng: 121.3194, color: '#ef4444', icon: '🚗', desc: '接朋友 · 高铁绍兴北→虹桥约1.5h', type: '起点', transport: '🚗 自驾出发' },
-  { name: '酒店入住', lat: 31.2455, lng: 121.4880, color: '#14b8a6', icon: '🏨', desc: '办理入住 · 放行李 · 华住会APP预订', type: '酒店', transport: '🚗 自驾约40min' },
-  { name: '白玉兰广场', lat: 31.2460, lng: 121.5000, color: '#ef4444', icon: '🅿️', desc: '停车 · 东大名路501号 · 开始逛', type: '停车起点', transport: '🚗 自驾约10min' },
-  { name: '海底捞 (星乐汇店)', lat: 31.2450, lng: 121.4950, color: '#f59e0b', icon: '🍲', desc: '午餐 · 人均¥150-200', type: '餐厅', transport: '🚶 步行10min' },
-  { name: '新艺花行', lat: 31.2465, lng: 121.4895, color: '#ec4899', icon: '🌸', desc: '网红花墙打卡 · 南天潼路1号', type: '网红打卡', transport: '🚶 步行8min' },
-  { name: '上海邮政博物馆', lat: 31.2460, lng: 121.4850, color: '#3b82f6', icon: '🏛️', desc: '免费参观 · 欧式建筑+苏州河景', type: '文化景点', transport: '🚶 步行5min' },
-  { name: '北外滩滨江步道', lat: 31.2520, lng: 121.4950, color: '#10b981', icon: '🌊', desc: '江景漫步 · 看陆家嘴天际线', type: '滨江', transport: '🚶 步行10min' },
-  { name: '公平路渡口 → 泰同栈渡口', lat: 31.2495, lng: 121.5050, color: '#06b6d4', icon: '⛴️', desc: '2元轮渡横渡黄浦江 · 看两岸天际线 · 支付宝扫码', type: '2元轮渡', transport: '🚶 步行到公平路渡口' },
-  { name: '寰映影城 (太阳宫)', lat: 31.2650, lng: 121.4850, color: '#a855f7', icon: '🎬', desc: 'IMAX《奥德赛》172分钟', type: '电影院', transport: '⛴️ 轮渡返回 + 🚇 地铁' },
-  { name: '北外滩来福士', lat: 31.2500, lng: 121.4920, color: '#f59e0b', icon: '🍽️', desc: '晚餐 · 人均¥200（备选：瑞虹太阳宫）', type: '餐厅', transport: '🚇 地铁/🚕 打车' },
-  { name: '北外滩夜景', lat: 31.2510, lng: 121.4940, color: '#10b981', icon: '✨', desc: '"小巨蛋"银色球体打卡', type: '夜景', transport: '🚶 步行' },
+  { name: '虹桥火车站', lat: 31.1942, lng: 121.3194, color: '#ef4444', icon: '🚗', desc: '接朋友 · 高铁绍兴北→虹桥约1.5h', type: '起点', transport: '🚗 自驾出发', images: ['images/01_hongqiao.jpg'] },
+  { name: '酒店入住', lat: 31.2455, lng: 121.4880, color: '#14b8a6', icon: '🏨', desc: '办理入住 · 放行李 · 华住会APP预订', type: '酒店', transport: '🚗 自驾约40min', images: [] },
+  { name: '白玉兰广场', lat: 31.2460, lng: 121.5000, color: '#ef4444', icon: '🅿️', desc: '停车 · 东大名路501号 · 开始逛', type: '停车起点', transport: '🚗 自驾约10min', images: ['images/02_baiyu.jpg'] },
+  { name: '海底捞 (星乐汇店)', lat: 31.2450, lng: 121.4950, color: '#f59e0b', icon: '🍲', desc: '午餐 · 人均¥150-200', type: '餐厅', transport: '🚶 步行10min', images: ['images/03a_haidilao_logo.jpg', 'images/03b_haidilao_table.png'] },
+  { name: '新艺花行', lat: 31.2465, lng: 121.4895, color: '#ec4899', icon: '🌸', desc: '网红花墙打卡 · 南天潼路1号', type: '网红打卡', transport: '🚶 步行8min', images: ['images/04_xinyi.jpg'] },
+  { name: '上海邮政博物馆', lat: 31.2460, lng: 121.4850, color: '#3b82f6', icon: '🏛️', desc: '免费参观 · 欧式建筑+苏州河景', type: '文化景点', transport: '🚶 步行5min', images: ['images/05_postal.jpg'] },
+  { name: '北外滩滨江步道', lat: 31.2520, lng: 121.4950, color: '#10b981', icon: '🌊', desc: '江景漫步 · 看陆家嘴天际线', type: '滨江', transport: '🚶 步行10min', images: ['images/06_binjiang.jpg'] },
+  { name: '公平路渡口 → 泰同栈渡口', lat: 31.2495, lng: 121.5050, color: '#06b6d4', icon: '⛴️', desc: '2元轮渡横渡黄浦江 · 看两岸天际线 · 支付宝扫码', type: '2元轮渡', transport: '🚶 步行到公平路渡口', images: ['images/07_ferry.jpg'] },
+  { name: '正大乐影城（陆家嘴店）', lat: 31.2390, lng: 121.5050, color: '#a855f7', icon: '🎬', desc: 'IMAX《奥德赛》172分钟', type: '电影院', transport: '⛴️ 轮渡返回 + 🚶 步行', images: ['images/08_zhengda_cinema.png'] },
+  { name: '北外滩来福士', lat: 31.2500, lng: 121.4920, color: '#f59e0b', icon: '🍽️', desc: '晚餐 · 人均¥200（备选：瑞虹太阳宫）', type: '餐厅', transport: '🚇 地铁/🚕 打车', images: ['images/09_raffles.jpg'] },
+  { name: '北外滩夜景', lat: 31.2510, lng: 121.4940, color: '#10b981', icon: '✨', desc: '"小巨蛋"银色球体打卡', type: '夜景', transport: '🚶 步行', images: ['images/10a_egg_blue.jpg', 'images/10b_egg_night.jpg'] },
 ];
 
 // Ferry crossing route (separate line on map)
@@ -769,8 +769,13 @@ stops.forEach((stop, idx) => {
     iconAnchor: [18, 48],
   });
   const marker = L.marker([stop.lat, stop.lng], { icon }).addTo(map);
+  const imgHtml = (stop.images && stop.images.length > 0)
+    ? `<div style="margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+        ${stop.images.map((src, i) => `<img src="${src}" style="width:100%;max-width:220px;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);" onclick="window.open('${src}','_blank')" loading="lazy" />`).join('')}
+      </div>`
+    : '';
   marker.bindPopup(`
-    <div style="text-align:center;min-width:180px;">
+    <div style="text-align:center;min-width:200px;">
       <div style="font-size:28px;margin-bottom:4px;">${stop.icon}</div>
       <div style="font-weight:700;font-size:14px;color:#f1f5f9;">${stop.name}</div>
       <div style="margin:4px 0;">
@@ -778,13 +783,14 @@ stops.forEach((stop, idx) => {
       </div>
       <div style="color:#818cf8;font-weight:700;font-size:13px;">第 ${idx + 1} 站 / 共 ${stops.length} 站</div>
       <div style="color:#94a3b8;font-size:12px;margin-top:6px;line-height:1.4;">${stop.desc}</div>
+      ${imgHtml}
       <div style="margin-top:8px;padding:4px 8px;background:rgba(129,140,248,0.15);border-radius:8px;color:#818cf8;font-size:12px;font-weight:600;">${stop.transport}</div>
       <div style="display:flex;gap:6px;margin-top:10px;">
         <button onclick="goStop(${idx - 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(30,41,59,0.8);color:#f1f5f9;font-size:12px;font-weight:600;cursor:pointer;${idx === 0 ? 'opacity:0.4;pointer-events:none;' : ''}">← 上一站</button>
         <button onclick="goStop(${idx + 1})" style="flex:1;padding:6px 12px;border:1px solid rgba(129,140,248,0.4);border-radius:8px;background:rgba(129,140,248,0.2);color:#818cf8;font-size:12px;font-weight:600;cursor:pointer;${idx === stops.length - 1 ? 'opacity:0.4;pointer-events:none;' : ''}">下一站 →</button>
       </div>
     </div>
-  `, { maxWidth: 280 });
+  `, { maxWidth: 300 });
   stopMarkers.push(marker);
 });
 
